@@ -127,6 +127,7 @@
       }
   notify:
     - restart postgres
+  no_log: True
 
 - name: Start Postgres
   systemd:
@@ -139,3 +140,4 @@
   include_tasks: database.yml
   with_items:
     - "{{ POSTGRES_DATABASES }}"
+  no_log: True
