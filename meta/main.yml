@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: Stefan Moravcik <stefan@virsas.com>
+  description: Postgres DB role
+  company: Virsas
+  min_ansible_version: 1.9
+  platforms:
+    - name: EL
+      versions:
+        - Centos7
+  categories:
+    - system
+    - database
+    - postgres

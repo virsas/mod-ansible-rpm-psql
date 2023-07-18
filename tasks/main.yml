@@ -1,0 +1,108 @@
+---
+- name: Install Postgres
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - postgresql15-server
+    - postgresql15-server-devel
+    - python3-pip
+    - python3-devel
+
+- name: Install psycopg
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - psycopg2
+
+- name: Create an ext4 filesystem on {{ POSTGRES_STORAGE }}
+  filesystem:
+    fstype: ext4
+    state: present
+    dev: "{{ POSTGRES_STORAGE }}"
+  when: POSTGRES_STORAGE is defined
+
+- name: Mount {{ POSTGRES_STORAGE }} to {{ POSTGRES_PATH }}
+  mount:
+    path: "{{ POSTGRES_PATH }}"
+    src: "{{ POSTGRES_STORAGE }}"
+    fstype: ext4
+    opts: defaults
+    state: mounted
+  when: POSTGRES_STORAGE is defined
+
+- name: Fix ownership
+  file:
+    state: directory
+    path: "{{ POSTGRES_PATH }}"
+    owner: "postgres"
+    group: "postgres"
+    mode: "0700"
+  when: POSTGRES_STORAGE is defined
+
+- name: Add systemd override directory
+  file:
+    state: directory
+    path: "/etc/systemd/system/postgresql.service.d"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: "Check for new installation"
+  stat:
+    path: "{{ POSTGRES_PATH }}/pgsql/data/pg_hba.conf"
+  register: postgres_data
+
+- name: "Initialize postgres data"
+  shell: "postgresql-setup --initdb"
+  when: not postgres_data.stat.exists
+
+- name: "Move postgres data to custom directory"
+  shell: "mv /var/lib/pgsql {{ POSTGRES_PATH }}/"
+  when: (not postgres_data.stat.exists) and (POSTGRES_PATH != "/var/lib")
+
+- name: Configure postgres
+  template:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    force: true
+  with_items:
+    - {
+        source: "postgresql.service.override.conf.j2",
+        destination: "/etc/systemd/system/postgresql.service.d/override.conf",
+        mode: "0644",
+        user: "root",
+        group: "root",
+      }
+    - {
+        source: "postgresql.conf.j2",
+        destination: "/var/lib/postgres/pgsql/data/postgresql.conf",
+        mode: "0600",
+        user: "postgres",
+        group: "postgres",
+      }
+    - {
+        source: "pg_hba.conf.j2",
+        destination: "/var/lib/postgres/pgsql/data/pg_hba.conf",
+        mode: "0600",
+        user: "postgres",
+        group: "postgres",
+      }
+  notify:
+    - restart postgres
+
+- name: Start Postgres
+  systemd:
+    name: postgresql
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: "Configure databases"
+  include_tasks: database.yml
+  with_items:
+    - "{{ POSTGRES_DATABASES }}"
