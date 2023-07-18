@@ -17,7 +17,7 @@ touch requirements/psql.yml
 # ansible-galaxy install -p vss_galaxy_roles --force -r requirements/psql.yml
 - src: "https://github.com/virsas/mod-ansible-rpm-psql"
   scm: git
-  version: v1.0.1
+  version: v1.1.0
   name: psql
   path: vss_galaxy_roles
 ```
@@ -114,6 +114,11 @@ ansible-playbook -i sites/NAME/inventory playbooks/psql.yml --diff
 ---
 POSTGRES_CONFIG_TEMPLATE: postgresql.conf.j2
 POSTGRES_HBA_TEMPLATE: ph_hba.conf.j2
+
+# Files must exist in ansible/files directory, you can change their names by modifying below values
+POSTGRES_SSL_CRT: server.crt
+POSTGRES_SSL_KEY: server.key
+POSTGRES_SSL_CA: root.crt
 
 POSTGRES_PATH: "/var/lib"
 

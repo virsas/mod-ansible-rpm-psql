@@ -80,15 +80,48 @@
       }
     - {
         source: "{{ POSTGRES_CONFIG_TEMPLATE }}",
-        destination: "/var/lib/postgres/pgsql/data/postgresql.conf",
+        destination: "{{ POSTGRES_PATH }}/pgsql/data/postgresql.conf",
         mode: "0600",
         user: "postgres",
         group: "postgres",
       }
     - {
         source: "{{ POSTGRES_HBA_TEMPLATE }}",
-        destination: "/var/lib/postgres/pgsql/data/pg_hba.conf",
+        destination: "{{ POSTGRES_PATH }}/pgsql/data/pg_hba.conf",
         mode: "0600",
+        user: "postgres",
+        group: "postgres",
+      }
+  notify:
+    - restart postgres
+
+- name: Copy SSL keys
+  copy:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+    owner: "{{ item.user }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    force: true
+  with_items:
+    - {
+        source: "{{ POSTGRES_SSL_CRT }}",
+        destination: "{{ POSTGRES_PATH }}/pgsql/data/server.crt",
+        mode: "0400",
+        user: "postgres",
+        group: "postgres",
+      }
+    - {
+        source: "{{ POSTGRES_SSL_KEY }}",
+        destination: "{{ POSTGRES_PATH }}/pgsql/data/server.key",
+        mode: "0400",
+        user: "postgres",
+        group: "postgres",
+      }
+    - {
+        source: "{{ POSTGRES_SSL_CA }}",
+        destination: "{{ POSTGRES_PATH }}/pgsql/data/root.crt",
+        mode: "0400",
         user: "postgres",
         group: "postgres",
       }
