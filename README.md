@@ -17,7 +17,7 @@ touch requirements/psql.yml
 # ansible-galaxy install -p vss_galaxy_roles --force -r requirements/psql.yml
 - src: "https://github.com/virsas/mod-ansible-rpm-psql"
   scm: git
-  version: v1.0.0
+  version: v1.0.1
   name: psql
   path: vss_galaxy_roles
 ```

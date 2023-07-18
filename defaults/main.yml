@@ -1,6 +1,6 @@
 ---
 POSTGRES_CONFIG_TEMPLATE: postgresql.conf.j2
-POSTGRES_HBA_TEMPLATE: ph_hba.conf.j2
+POSTGRES_HBA_TEMPLATE: pg_hba.conf.j2
 POSTGRES_PATH: "/var/lib"
 
 POSTGRES_CONFIG_HOST: "*"
