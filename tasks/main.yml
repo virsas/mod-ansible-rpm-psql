@@ -79,14 +79,14 @@
         group: "root",
       }
     - {
-        source: "postgresql.conf.j2",
+        source: "{{ POSTGRES_CONFIG_TEMPLATE }}",
         destination: "/var/lib/postgres/pgsql/data/postgresql.conf",
         mode: "0600",
         user: "postgres",
         group: "postgres",
       }
     - {
-        source: "pg_hba.conf.j2",
+        source: "{{ POSTGRES_HBA_TEMPLATE }}",
         destination: "/var/lib/postgres/pgsql/data/pg_hba.conf",
         mode: "0600",
         user: "postgres",

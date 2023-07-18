@@ -112,6 +112,9 @@ ansible-playbook -i sites/NAME/inventory playbooks/psql.yml --diff
 
 ```yml
 ---
+POSTGRES_CONFIG_TEMPLATE: postgresql.conf.j2
+POSTGRES_HBA_TEMPLATE: ph_hba.conf.j2
+
 POSTGRES_PATH: "/var/lib"
 
 POSTGRES_CONFIG_HOST: "*"
@@ -131,4 +134,9 @@ POSTGRES_DATABASES:
 # If you specify POSTGRES_STORAGE, the device will be formatted to ext4 and mounted to /var/lib/postgres for data persistancy
 POSTGRES_STORAGE: "/dev/sdb"
 POSTGRES_PATH: "/var/lib/postgres"
+
+# If you want to override the default configuration, just change the name of any or both config files
+POSTGRES_CONFIG_TEMPLATE: postgresql.j2
+POSTGRES_HBA_TEMPLATE: ph_hba.j2
+# and then place them in ansible/templates directory
 ```
