@@ -4,7 +4,7 @@
 
 - name: "Create database"
   postgresql_db:
-    name: "{{ database_item.name }}"
+    name: "{{ database_item.db }}"
     encoding: "{{ database_item.encoding | default(omit) }}"
   become: yes
   become_user: postgres
