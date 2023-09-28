@@ -137,7 +137,15 @@
     daemon_reload: yes
 
 - name: "Configure databases"
-  include_tasks: database.yml
+  include_tasks: databases.yml
   with_items:
     - "{{ POSTGRES_DATABASES }}"
+  loop_control:
+    loop_var: database_item
+  when:
+    - POSTGRES_DATABASES is defined
+    - POSTGRES_DATABASES is not string
+    - POSTGRES_DATABASES is not mapping
+    - POSTGRES_DATABASES is iterable
+    - POSTGRES_DATABASES | length > 0
   no_log: True

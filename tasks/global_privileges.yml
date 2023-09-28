@@ -1,0 +1,11 @@
+- name: "Add privileges {{ global_privilege_item }} to user {{ role }}"
+  postgresql_privs:
+    database: "{{ privilegesdb }}"
+    roles: "{{ role }}"
+
+    type: "{{ global_privilege_item.type }}"
+    objs: "{{ global_privilege_item.objects}}"
+    privs: "{{ global_privilege_item.privileges }}"
+    grant_option: "{{ global_privilege_item.grant_option }}"
+  become: yes
+  become_user: postgres

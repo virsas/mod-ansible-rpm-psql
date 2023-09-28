@@ -17,7 +17,7 @@ touch requirements/psql.yml
 # ansible-galaxy install -p vss_galaxy_roles --force -r requirements/psql.yml
 - src: "https://github.com/virsas/mod-ansible-rpm-psql"
   scm: git
-  version: v1.1.0
+  version: v1.2.0
   name: psql
   path: vss_galaxy_roles
 ```
@@ -125,11 +125,47 @@ POSTGRES_PATH: "/var/lib"
 POSTGRES_CONFIG_HOST: "*"
 POSTGRES_CONFIG_PORT: "5432"
 POSTGRES_CONFIG_MAX_CON: 100
-POSTGRES_DATABASES:
-  [
-    { name: db1, user: user1, pass: userPass, priv: all },
-    { name: db2, user: user2, pass: userPass, priv: all },
-  ]
+POSTGRES_DATABASES: [{ db: db1, encoding: UTF-8, users: [
+          {
+            name: user1,
+            pass: "userPass",
+            # individual database level privileges.
+            global_privileges: [
+                {
+                  # database or schema
+                  type: database,
+                  # database or schema name
+                  objects: db_name,
+                  # privileges USAGE, CREATE, etc
+                  privileges: "CREATE",
+                  grant_option: False,
+                },
+              ],
+            # individual schema level privileges.
+            privileges: [
+                {
+                  # supported types table, partition table, sequence, function or procedure
+                  type: table,
+                  # ALL_IN_SCHEMA or list of objects the privileges should be applied to like a list of tables in case of table type.
+                  objects: ALL_IN_SCHEMA,
+                  # privileges, it can be comma separated list like USAGE,SELECT or ALL
+                  privileges: "ALL",
+                  # name of the schema
+                  schema: "public",
+                  # Wheather role may grant privileges to others
+                  grant_option: False,
+                },
+                # another example to grant usage, select on all sequences in public schema to user
+                {
+                  type: sequence,
+                  objects: ALL_IN_SCHEMA,
+                  privileges: "USAGE,SELECT",
+                  schema: "public",
+                  grant_option: False,
+                },
+              ],
+          },
+        ] }, { db: db2, encoding: UTF-8, users: [{ name: user2, pass: "userPass", privileges: [{ type: table, objects: ALL_IN_SCHEMA, privileges: "ALL", schema: "public", grant_option: False }] }] }]
 ```
 
 ## Optional Variables

@@ -1,0 +1,42 @@
+- name: "Set variables"
+  set_fact:
+    user: "{{ user_item.name }}"
+
+- name: "Create db user"
+  postgresql_user:
+    name: "{{ user_item.user }}"
+    password: "{{ user_item.pass }}"
+  become: yes
+  become_user: postgres
+
+- name: "Add schema privileges to {{ user }}"
+  include_tasks: privileges.yml
+  vars:
+    role: "{{ user }}"
+    privilegesdb: "{{ userdb }}"
+  with_items:
+    - "{{ user_item.privileges }}"
+  loop_control:
+    loop_var: privilege_item
+  when:
+    - user_item.privileges is defined
+    - user_item.privileges is not string
+    - user_item.privileges is not mapping
+    - user_item.privileges is iterable
+    - user_item.privileges | length > 0
+
+- name: "Add global privileges to {{ user }}"
+  include_tasks: global_privileges.yml
+  vars:
+    role: "{{ user }}"
+    privilegesdb: "{{ userdb }}"
+  with_items:
+    - "{{ user_item.global_privileges }}"
+  loop_control:
+    loop_var: global_privilege_item
+  when:
+    - user_item.global_privileges is defined
+    - user_item.global_privileges is not string
+    - user_item.global_privileges is not mapping
+    - user_item.global_privileges is iterable
+    - user_item.global_privileges | length > 0
