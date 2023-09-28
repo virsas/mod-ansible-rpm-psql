@@ -125,7 +125,7 @@ POSTGRES_PATH: "/var/lib"
 POSTGRES_CONFIG_HOST: "*"
 POSTGRES_CONFIG_PORT: "5432"
 POSTGRES_CONFIG_MAX_CON: 100
-POSTGRES_DATABASES: [{ db: db1, encoding: UTF-8, users: [
+POSTGRES_DATABASES: [{ name: db1, encoding: UTF-8, users: [
           {
             name: user1,
             pass: "userPass",
@@ -165,7 +165,7 @@ POSTGRES_DATABASES: [{ db: db1, encoding: UTF-8, users: [
                 },
               ],
           },
-        ] }, { db: db2, encoding: UTF-8, users: [{ name: user2, pass: "userPass", privileges: [{ type: table, objects: ALL_IN_SCHEMA, privileges: "ALL", schema: "public", grant_option: False }] }] }]
+        ] }, { name: db2, encoding: UTF-8, users: [{ name: user2, pass: "userPass", privileges: [{ type: table, objects: ALL_IN_SCHEMA, privileges: "ALL", schema: "public", grant_option: False }] }] }]
 ```
 
 ## Optional Variables
