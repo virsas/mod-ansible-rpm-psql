@@ -4,7 +4,7 @@
 
 - name: "Create db user"
   postgresql_user:
-    name: "{{ user_item.user }}"
+    name: "{{ user_item.name }}"
     password: "{{ user_item.pass }}"
   become: yes
   become_user: postgres
